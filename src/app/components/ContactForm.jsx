@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-
-export default function ContactForm() {
+const ContactForm = () => {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         phone: "",
+        message: "",
     });
 
     const [errors, setErrors] = useState({});
     const [status, setStatus] = useState("idle");
 
-    function handleChange(event) {
+    const handleChange = (event) => {
         const { name, value } = event.target;
 
         if (name === "phone" && !/^\d*$/.test(value)) {
@@ -30,7 +30,7 @@ export default function ContactForm() {
         }));
     }
 
-    function validateForm() {
+    const validateForm = () => {
         const newErrors = {};
 
         if (!formData.name.trim()) {
@@ -56,11 +56,10 @@ export default function ContactForm() {
         return newErrors;
     }
 
-    async function handleSubmit(event) {
+     const handleSubmit = async(event) =>{
         event.preventDefault();
 
         const validationErrors = validateForm();
-
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             setStatus("idle");
@@ -80,7 +79,6 @@ export default function ContactForm() {
             });
 
             const data = await response.json();
-
             if (!response.ok) {
                 throw new Error(data.message || "Something went wrong.");
             }
@@ -91,6 +89,7 @@ export default function ContactForm() {
                 name: "",
                 email: "",
                 phone: "",
+                message: "",
             });
         } catch (error) {
             console.error("Submit error:", error);
@@ -198,6 +197,31 @@ export default function ContactForm() {
                             </p>
                         )}
                     </div>
+                    <div>
+                        <label
+                            htmlFor="message"
+                            className="mb-2 block text-sm font-medium text-gray-700"
+                        >
+                            Message
+                        </label>
+
+                        <textarea
+                            id="message"
+                            name="message"
+                            value={formData.message}
+                            onChange={handleChange}
+                            rows={5}
+                            placeholder="Tell us how we can help..."
+                            className={`w-full resize-none rounded-xl border bg-white px-4 py-3 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 ${errors.message ? "border-red-500" : "border-gray-200"
+                                }`}
+                        />
+
+                        {errors.message && (
+                            <p className="mt-1 text-sm text-red-500">
+                                {errors.message}
+                            </p>
+                        )}
+                    </div>
 
                     <button
                         type="submit"
@@ -231,3 +255,5 @@ export default function ContactForm() {
         </section>
     );
 }
+
+export default ContactForm;
